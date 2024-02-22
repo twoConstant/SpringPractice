@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.request.AddArticleRequest;
 import com.example.demo.dto.request.UpdateArticleRequest;
+import com.example.demo.dto.response.FindAllArticlesResponse;
 import com.example.demo.entity.Article;
 import com.example.demo.service.BlogService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,6 +34,14 @@ public class BlogController {
     }
 
     // 게시글 전체 조회
+    @GetMapping("/articles")
+    @Operation(summary = "게시글 전체 조회", description = "모든 게시글을 조회 합니다.")
+    @ApiResponse(responseCode = "200", description = "성공적으로 모든 게시글을 찾았을 때", content = @Content(schema = @Schema(implementation = Article.class)))
+    @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없을 때")
+    public ResponseEntity<List<FindAllArticlesResponse>> findAllArticles() {
+        List<FindAllArticlesResponse> allArticles = blogService.findAllArticle();
+        return ResponseEntity.ok(allArticles);
+    }
 
     // 게시글 단일 생성
     @PostMapping("/article")

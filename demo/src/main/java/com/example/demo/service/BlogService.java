@@ -2,11 +2,13 @@ package com.example.demo.service;
 
 import com.example.demo.dto.request.AddArticleRequest;
 import com.example.demo.dto.request.UpdateArticleRequest;
+import com.example.demo.dto.response.FindAllArticlesResponse;
 import com.example.demo.entity.Article;
 import com.example.demo.repository.BlogRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +23,15 @@ public class BlogService {
     }
 
     // 게시글 전체 조회
+    public List<FindAllArticlesResponse> findAllArticle() {
+        return blogRepository.findAll()
+                .stream()
+                .map((a) -> FindAllArticlesResponse.builder()
+                        .title(a.getTitle())
+                        .content(a.getContent())
+                        .build())
+                .toList();
+    }
 
     // 게시글 단일 생성
     public Article addArticle(AddArticleRequest request) {
