@@ -1,7 +1,9 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.request.ArticleRequest;
+import com.example.demo.dto.response.ArticleResponse;
 import com.example.demo.dto.response.OneArticleResponse;
+import com.example.demo.dto.response.UserResponse;
 import com.example.demo.entity.Article;
 import com.example.demo.entity.User;
 import com.example.demo.repository.articleRepository.ArticleRepository;
@@ -20,9 +22,14 @@ public class ArticleService {
     private final UserRepository userRepository;
 
     // 게시글 단일 조회
-    public Article findArticleById(Long articleId) {
-        return articleRepository.findById(articleId)
+    public ArticleResponse findArticleById(Long articleId) {
+        Article article =  articleRepository.findById(articleId)
                 .orElseThrow(() -> new IllegalArgumentException("No Article with Request article_id"));
+        return ArticleResponse.builder()
+                .name(article.getUser().getName())
+                .title(article.getTitle())
+                .content(article.getContent())
+                .build();
     }
 
     // 게시글 전체 조회
@@ -51,12 +58,18 @@ public class ArticleService {
     }
 
     // 게시글 단일 생성
-    public Article addArticle(ArticleRequest request, Long user_id) {
+    public ArticleResponse addArticle(ArticleRequest request, Long user_id) {
         // user 찾기
         User user = userRepository.findById(user_id)
                 .orElseThrow(() -> new IllegalArgumentException("There is no user with your Request user_id"));
         // Article 객체로 만들고, 저장해서 Article 객체 반환.
-        return articleRepository.save(request.toArticle(user));
+        Article article = articleRepository.save(request.toArticle(user));
+        return ArticleResponse.builder()
+                .name(user.getName())
+                .title(article.getTitle())
+                .content(article.getContent())
+                .build();
+
     }
 
     // 게시글 단일 삭제
@@ -71,7 +84,7 @@ public class ArticleService {
 
 
     // 게시글 단일 수정
-    public Article updateArticle(Long article_id, ArticleRequest request) {
+    public ArticleResponse updateArticle(Long article_id, ArticleRequest request, UserResponse userResponse) {
         // 수정할 게시글 찾고
         Article findArticle = articleRepository.findById(article_id)
                 .orElseThrow(() -> new IllegalArgumentException("No Article with Request article_id"));
@@ -81,7 +94,12 @@ public class ArticleService {
                 request.getTitle(),
                 request.getContent()
         );
+        return ArticleResponse.builder()
+                .name(userResponse.getName())
+                .title(findArticle.getTitle())
+                .content(findArticle.getContent())
+                .build();
 
-        return findArticle;
+
     }
 }

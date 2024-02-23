@@ -33,14 +33,9 @@ public class ArticleController {
     @Operation(summary = "게시글 단일 조회", description = "게시글 ID를 통해 특정 게시글을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "성공적으로 게시글을 찾았을 때", content = @Content(schema = @Schema(implementation = Article.class)))
     @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없을 때")
-    public ResponseEntity<OneArticleResponse> findArticleById(@PathVariable("article_id") Long articleId) {
-        Article findArticle = articleService.findArticleById(articleId);
-        OneArticleResponse oneArticleResponse = OneArticleResponse.builder()
-                .id(findArticle.getId())
-                .title(findArticle.getTitle())
-                .content(findArticle.getContent())
-                .build();
-        return ResponseEntity.ok(oneArticleResponse);
+    public ResponseEntity<ArticleResponse> findArticleById(@PathVariable("article_id") Long articleId) {
+        ArticleResponse articleResponse = articleService.findArticleById(articleId);
+        return ResponseEntity.ok(articleResponse);
     }
 
     // 게시글 전체 조회
@@ -68,14 +63,9 @@ public class ArticleController {
     @Operation(summary = "게시글 단일 생성", description = "새로운 게시글을 생성합니다.")
     @ApiResponse(responseCode = "201", description = "성공적으로 게시글을 생성했을 때", content = @Content(schema = @Schema(implementation = Article.class)))
     public ResponseEntity<ArticleResponse>  addArticle(@PathVariable Long user_id , @RequestBody ArticleRequest request) {
-        Article savedArticle = articleService.addArticle(request, user_id);
-        ArticleResponse articlesResponse = ArticleResponse.builder()
-                .name(savedArticle.getUser().getName())
-                .title(savedArticle.getTitle())
-                .content(savedArticle.getContent())
-                .build();
+        ArticleResponse articleResponse = articleService.addArticle(request, user_id);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(articlesResponse);
+                .body(articleResponse);
     }
 
     // 게시글 단일 삭제
@@ -96,12 +86,8 @@ public class ArticleController {
     @ApiResponse(responseCode = "200", description = "성공적으로 게시글을 수정했을 때", content = @Content(schema = @Schema(implementation = Article.class)))
     public ResponseEntity<ArticleResponse> updateArticleById(@PathVariable("user_id") Long userId, @PathVariable("article_id") Long articleId, @RequestBody ArticleRequest request) {
         UserResponse userResponse = userService.findUserById(userId);
-        Article updatedArticle = articleService.updateArticle(articleId, request);
-        ArticleResponse articleResponse = ArticleResponse.builder()
-                .title(updatedArticle.getTitle())
-                .content(updatedArticle.getContent())
-                .name(updatedArticle.getUser().getName())
-                .build();
-        return ResponseEntity.ok(articleResponse);
+        ArticleResponse updatedArticle = articleService.updateArticle(articleId, request, userResponse);
+
+        return ResponseEntity.ok(updatedArticle);
     }
 }
