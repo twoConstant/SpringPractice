@@ -4,12 +4,11 @@ import com.example.demo.entity.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.stereotype.Service;
 
 @NoArgsConstructor
 @Getter
 @Setter
-public class AddUserRequest {
+public class UserRequest {
     private String name;
 
     public User toUser() {
