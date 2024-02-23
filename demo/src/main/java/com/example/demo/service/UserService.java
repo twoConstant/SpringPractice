@@ -14,6 +14,7 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ValidationService validationService;
 
     public UserResponse saveUser(UserRequest request) {
 
@@ -47,7 +48,7 @@ public class UserService {
     // 유저 삭제
     public void  deleteUserById(Long userId) {
         // 해당 엔티티가 있는지 확인
-        if (userRepository.existsById(userId)) {
+        if (validationService.isValidUserId(userId)) {
             userRepository.deleteById(userId);
             return;
         }

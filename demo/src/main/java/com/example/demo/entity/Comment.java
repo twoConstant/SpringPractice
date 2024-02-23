@@ -39,4 +39,8 @@ public class Comment {
         this.user = user;
         this.article = article;
     }
+
+    public void updateComment(String content) {
+        this.content = content;
+    }
 }

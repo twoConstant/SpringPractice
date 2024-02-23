@@ -20,10 +20,11 @@ public class ArticleService {
 
     private final ArticleRepository articleRepository;
     private final UserRepository userRepository;
+    private final ValidationService validationService;
 
     // 게시글 단일 조회
     public ArticleResponse findArticleById(Long articleId) {
-        Article article =  articleRepository.findById(articleId)
+        Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new IllegalArgumentException("No Article with Request article_id"));
         return ArticleResponse.builder()
                 .name(article.getUser().getName())
@@ -74,13 +75,12 @@ public class ArticleService {
 
     // 게시글 단일 삭제
     public void deleteArticleById(Long article_id) {
-        if (articleRepository.existsById(article_id)){
+        if (validationService.isValidArticleId(article_id)) {
             articleRepository.deleteById(article_id);
             return;
         }
         throw new IllegalArgumentException("there is no Article with your request articleId");
     }
-
 
 
     // 게시글 단일 수정
