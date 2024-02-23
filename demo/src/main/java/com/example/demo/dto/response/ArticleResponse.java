@@ -13,10 +13,10 @@ public class ArticleResponse {
     private String name;
 
     @Builder
-    public ArticleResponse(String title, String content, User user) {
+    public ArticleResponse(String title, String content, String name) {
         this.title = title;
         this.content = content;
-        this.name = user.getName();
+        this.name = name;
     }
 
 }

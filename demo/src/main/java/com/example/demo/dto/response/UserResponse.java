@@ -1,6 +1,5 @@
 package com.example.demo.dto.response;
 
-import com.example.demo.repository.UserRepository;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

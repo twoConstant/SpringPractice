@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.request.ArticleRequest;
 import com.example.demo.dto.response.ArticleResponse;
 import com.example.demo.dto.response.OneArticleResponse;
+import com.example.demo.dto.response.UserResponse;
 import com.example.demo.entity.Article;
 import com.example.demo.entity.User;
 import com.example.demo.service.ArticleService;
@@ -53,6 +54,14 @@ public class ArticleController {
     }
 
 
+    // 특정 유저가 쓴 게시글 전체 조회
+    @GetMapping("/users/{user_id}/articles")
+    public ResponseEntity<List<OneArticleResponse>> findAllArticleByUserId(@PathVariable("user_id") Long userId) {
+        List<OneArticleResponse> articleResponseList = articleService.findAllArticleByUserId(userId);
+        return ResponseEntity.ok(articleResponseList);
+    }
+
+
     // 게시글 단일 생성
     @PostMapping("/users/{user_id}/articles")
     @Transactional
@@ -61,7 +70,7 @@ public class ArticleController {
     public ResponseEntity<ArticleResponse>  addArticle(@PathVariable Long user_id , @RequestBody ArticleRequest request) {
         Article savedArticle = articleService.addArticle(request, user_id);
         ArticleResponse articlesResponse = ArticleResponse.builder()
-                .user(savedArticle.getUser())
+                .name(savedArticle.getUser().getName())
                 .title(savedArticle.getTitle())
                 .content(savedArticle.getContent())
                 .build();
@@ -86,12 +95,12 @@ public class ArticleController {
     @Operation(summary = "게시글 단일 수정", description = "게시글 ID를 통해 특정 게시글을 수정합니다.")
     @ApiResponse(responseCode = "200", description = "성공적으로 게시글을 수정했을 때", content = @Content(schema = @Schema(implementation = Article.class)))
     public ResponseEntity<ArticleResponse> updateArticleById(@PathVariable("user_id") Long userId, @PathVariable("article_id") Long articleId, @RequestBody ArticleRequest request) {
-        User user = userService.findUserById(userId);
+        UserResponse userResponse = userService.findUserById(userId);
         Article updatedArticle = articleService.updateArticle(articleId, request);
         ArticleResponse articleResponse = ArticleResponse.builder()
                 .title(updatedArticle.getTitle())
                 .content(updatedArticle.getContent())
-                .user(user)
+                .name(updatedArticle.getUser().getName())
                 .build();
         return ResponseEntity.ok(articleResponse);
     }
