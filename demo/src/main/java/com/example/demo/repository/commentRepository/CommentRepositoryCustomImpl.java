@@ -5,6 +5,7 @@ import com.example.demo.entity.QComment;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
+
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -21,6 +22,7 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom{
                         .and(comment.user.id.eq(userId)))
                 .fetch();
     }
+
 
     @Override
     public List<Comment> findAllArticleComment(Long articleId) {

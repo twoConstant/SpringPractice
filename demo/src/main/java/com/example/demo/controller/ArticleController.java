@@ -14,9 +14,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 
@@ -39,13 +43,23 @@ public class ArticleController {
     }
 
     // 게시글 전체 조회
+//    @GetMapping("/articles")
+//    @Operation(summary = "게시글 전체 조회", description = "모든 게시글을 조회 합니다.")
+//    @ApiResponse(responseCode = "200", description = "성공적으로 모든 게시글을 찾았을 때", content = @Content(schema = @Schema(implementation = Article.class)))
+//    @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없을 때")
+//    public ResponseEntity<List<OneArticleResponse>> findAllArticles() {
+//        List<OneArticleResponse> allArticles = articleService.findAllArticle();
+//        return ResponseEntity.ok(allArticles);
+//    }
+
+    // 게시글 페이지네이션 게시글 제목만 응답
     @GetMapping("/articles")
-    @Operation(summary = "게시글 전체 조회", description = "모든 게시글을 조회 합니다.")
-    @ApiResponse(responseCode = "200", description = "성공적으로 모든 게시글을 찾았을 때", content = @Content(schema = @Schema(implementation = Article.class)))
-    @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없을 때")
-    public ResponseEntity<List<OneArticleResponse>> findAllArticles() {
-        List<OneArticleResponse> allArticles = articleService.findAllArticle();
-        return ResponseEntity.ok(allArticles);
+    public ResponseEntity<Page<ArticleResponse>> listArticles(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        Page<ArticleResponse> articleResponses =  articleService.getArticles(PageRequest.of(page, size));
+        return ResponseEntity.ok(articleResponses);
     }
 
 

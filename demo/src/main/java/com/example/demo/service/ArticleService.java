@@ -9,6 +9,9 @@ import com.example.demo.entity.User;
 import com.example.demo.repository.articleRepository.ArticleRepository;
 import com.example.demo.repository.userRepository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -101,5 +104,14 @@ public class ArticleService {
                 .build();
 
 
+    }
+
+    public Page<ArticleResponse> getArticles(Pageable pageable) {
+        Page<Article> articles = articleRepository.findAll(pageable);
+        return articles.map(article -> new ArticleResponse().builder()
+                .title(article.getTitle())
+                .content(article.getContent())
+                .name(article.getUser().getName())
+                .build());
     }
 }
