@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.request.ArticleRequest;
+import com.example.demo.dto.response.ArticlePageResponse;
 import com.example.demo.dto.response.ArticleResponse;
 import com.example.demo.dto.response.OneArticleResponse;
 import com.example.demo.dto.response.UserResponse;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -105,13 +107,20 @@ public class ArticleService {
 
 
     }
-
-    public Page<ArticleResponse> getArticles(Pageable pageable) {
-        Page<Article> articles = articleRepository.findAll(pageable);
-        return articles.map(article -> new ArticleResponse().builder()
-                .title(article.getTitle())
-                .content(article.getContent())
-                .name(article.getUser().getName())
-                .build());
+    // 게시글 조회 페이지 네이션
+    public ArticlePageResponse getArticles(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+        Page<Article> articlePage = articleRepository.findArticleBy(pageRequest);
+        return ArticlePageResponse.builder()
+                .content(articlePage.getContent()
+                        .stream()
+                        .map((article) -> ArticleResponse.builder()
+                        .title(article.getTitle())
+                        .content(article.getContent())
+                        .name(article.getUser().getName())
+                        .build()).toList())
+                .totalElements(articlePage.getTotalElements())
+                .pageNum(articlePage.getNumber())
+                .build();
     }
 }

@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.request.ArticleRequest;
+import com.example.demo.dto.response.ArticlePageResponse;
 import com.example.demo.dto.response.ArticleResponse;
 import com.example.demo.dto.response.OneArticleResponse;
 import com.example.demo.dto.response.UserResponse;
@@ -52,14 +53,14 @@ public class ArticleController {
 //        return ResponseEntity.ok(allArticles);
 //    }
 
-    // 게시글 페이지네이션 게시글 제목만 응답
+    // 게시글 페이지네이션 게시글 Article_id ACE
     @GetMapping("/articles")
-    public ResponseEntity<Page<ArticleResponse>> listArticles(
+    public ResponseEntity<ArticlePageResponse> listArticles(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size
     ) {
-        Page<ArticleResponse> articleResponses =  articleService.getArticles(PageRequest.of(page, size));
-        return ResponseEntity.ok(articleResponses);
+        ArticlePageResponse articlePageResponses =  articleService.getArticles(page, size);
+        return ResponseEntity.ok(articlePageResponses);
     }
 
 
